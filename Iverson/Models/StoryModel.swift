@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-Story data model.
-*/
+/// Story data model.
 
 import Foundation
 import AVFoundation
@@ -28,16 +23,20 @@ class Story: Identifiable {
     }
     
     func suggestedTitle() async throws -> String? {
-        guard SystemLanguageModel.default.isAvailable else { return nil }
+        let plain = String(text.characters).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !plain.isEmpty else { return nil }
+        guard SystemLanguageModel.default.isAvailable else {
+            return String(plain.prefix(48))
+        }
         let session = LanguageModelSession(model: SystemLanguageModel.default)
-        let answer = try await session.respond(to: "Here is a children's story. Can you please return your very best suggested title for it, with no other text? The title should be descriptive of the story and include the main character's name. Story: \(text.characters)")
+        let answer = try await session.respond(to: "Suggest a very short title for this speech transcript. Return only the title, no quotes or extra text. Transcript: \(plain)")
         return answer.content.trimmingCharacters(in: .punctuationCharacters)
     }
 }
 
 extension Story {
     static func blank() -> Story {
-        return .init(title: "New Story", text: AttributedString(""))
+        return .init(title: "New Session", text: AttributedString(""))
     }
     
     func storyBrokenUpByLines() -> AttributedString {

@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-Conversion code for audio inputs.
-*/
+/// Conversion code for audio inputs.
 
 import Foundation
 import AVFoundation

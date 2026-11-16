@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-Helper code for UI and transcription.
-*/
+/// Helper code for UI and transcription.
 
 import Foundation
 import AVFoundation
@@ -115,8 +110,28 @@ extension TranscriptView {
         }
     }
     
-    func handleRecordingButtonTap() {
-        isRecording.toggle()
+    func beginTalk() {
+        guard !isRecording else { return }
+        if isPlaying { isPlaying = false }
+        if story.isDone { story.isDone = false }
+        speechTranscriber.resetCodeBuffer()
+        isRecording = true
+    }
+
+    func endTalk() {
+        guard isRecording else { return }
+        isRecording = false
+    }
+
+    /// While linked to a computer, keep the mic open so the Mac talk key can gate typing.
+    func syncLinkedListening() {
+        let shouldListen = sendToPC && keyboard.isConnectedToPC
+        if shouldListen, !isRecording {
+            beginTalk()
+        } else if !shouldListen, isRecording, sendToPC {
+            // Stay listening while Link is on even if PC briefly disconnects;
+            // only stop when Link is turned off (handled by the Link toggle).
+        }
     }
     
     func handlePlayButtonTap() {
@@ -130,6 +145,7 @@ extension TranscriptView {
                 Spacer()
             }
         }
+        .scrollIndicators(.hidden)
     }
     
     func attributedStringWithCurrentValueHighlighted(attributedString: AttributedString) -> AttributedString {
@@ -137,7 +153,8 @@ extension TranscriptView {
         copy.runs.forEach { run in
             if shouldBeHighlighted(attributedStringRun: run) {
                 let range = run.range
-                copy[range].backgroundColor = .mint.opacity(0.2)
+                copy[range].foregroundColor = DeviceChrome.ink
+                copy[range].backgroundColor = DeviceChrome.ink.opacity(0.08)
             }
         }
         return copy
@@ -161,9 +178,12 @@ extension TranscriptView {
     }
     
     @ViewBuilder func textWithHighlighting(attributedString: AttributedString) -> some View {
-        Group {
-            Text(attributedStringWithCurrentValueHighlighted(attributedString: attributedString))
-                .font(.title)
-        }
+        Text(attributedStringWithCurrentValueHighlighted(attributedString: attributedString))
+            .font(.system(size: 40, weight: .ultraLight, design: .default))
+            .tracking(1.5)
+            .monospacedDigit()
+            .lineSpacing(10)
+            .foregroundStyle(DeviceChrome.inkQuiet)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

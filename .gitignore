@@ -1,21 +1,17 @@
-# See LICENSE folder for this sample’s licensing information.
-#
-# Apple sample code gitignore configuration.
-
 # Finder
 .DS_Store
 
-# Xcode - User files
+# Xcode user state
 xcuserdata/
+*.xcuserstate
 
-**/*.xcodeproj/project.xcworkspace/*
-!**/*.xcodeproj/project.xcworkspace/xcshareddata
+# Build
+build/
+DerivedData/
 
-**/*.xcodeproj/project.xcworkspace/xcshareddata/*
-!**/*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+# macOS
+.AppleDouble
+.LSOverride
 
-**/*.playground/playground.xcworkspace/*
-!**/*.playground/playground.xcworkspace/xcshareddata
-
-**/*.playground/playground.xcworkspace/xcshareddata/*
-!**/*.playground/playground.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+# Local App Store screenshot exports
+appstore-screenshots/

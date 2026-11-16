@@ -1,0 +1,6 @@
+//
+// Shared build settings for iverson.io.
+//
+
+// Kept for Xcode baseConfigurationReference compatibility.
+EMPTY_PLACEHOLDER=

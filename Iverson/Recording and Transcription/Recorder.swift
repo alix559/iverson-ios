@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-Audio input code
-*/
+/// Audio input code
 
 import Foundation
 import AVFoundation
@@ -45,16 +40,20 @@ class Recorder {
         }
     }
     
-    func stopRecording() async throws {
+    func stopRecording(finishSession: Bool = false) async throws {
+        audioEngine.inputNode.removeTap(onBus: 0)
+        outputContinuation?.finish()
+        outputContinuation = nil
         audioEngine.stop()
-        story.isDone.wrappedValue = true
 
         try await transcriber.finishTranscribing()
 
-        Task {
-            self.story.title.wrappedValue = try await story.wrappedValue.suggestedTitle() ?? story.title.wrappedValue
+        if finishSession {
+            story.isDone.wrappedValue = true
+            Task {
+                self.story.title.wrappedValue = try await story.wrappedValue.suggestedTitle() ?? story.title.wrappedValue
+            }
         }
-
     }
     
     func pauseRecording() {
